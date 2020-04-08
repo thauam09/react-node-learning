@@ -1,38 +1,84 @@
-.App {
-  text-align: center;
+.container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(223, 222, 213);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+header{
+    display: flex;
+    justify-content: center;
+    align-items:center; 
+    font-size: 35px;
+    width: 100%;
+    height: 60px;
+    background-color: #4c89e3;
+    color:#FFF;
+    user-select: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+header strong:hover{
+    color:#000;
+    cursor: pointer;
+    transition: all 0.8s;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.capa{
+    width: 100%;
+    height: 400px;
 }
 
-.App-link {
-  color: #61dafb;
+.post{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 700px;
+    background-color: #FFF;
+    border-width: 1px;
+    border-radius: 7px;
+    margin: 8px;
+    padding: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.titulo{
+    font-size: 25px;
+    margin-bottom: 25px;
+    margin-top: 10px;
+    color: #000;
 }
+
+.subtitulo{
+    margin: 5px;
+}
+
+.botao{
+    height: 40px;
+    background: none;
+    border-radius: 5px;
+    border: 2px solid #4c89e3;
+    color: #4c89e3;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    text-decoration: none;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s;
+    margin: 10px;
+}
+
+.botao:hover{
+    background: #4c89e3;
+    color: #FFF;
+}
+
+
+
+
+
+
+
+
+
