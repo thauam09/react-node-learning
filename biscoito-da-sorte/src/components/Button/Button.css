@@ -1,0 +1,24 @@
+.Button{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+.botao{
+    font-weight: bold;
+    width: 150px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+.botao:hover{
+    background-color: white;
+    color: orangered;
+    transition: all 0.5s;
+}
