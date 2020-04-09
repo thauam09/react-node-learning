@@ -1,0 +1,9 @@
+.Filme{
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+}
+
+.Filme img{
+    border-radius: 5px;
+}
