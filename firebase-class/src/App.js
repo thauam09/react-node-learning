@@ -9,7 +9,7 @@ class App extends Component{
       token: 'Carregando...',
       nome: '',
       idade: '',
-      tokenInput: '',
+      cargoInput: '',
       nomeInput: '',
       idadeInput: '',
       usuarios: []
@@ -31,15 +31,21 @@ class App extends Component{
   getUsuarios(){
     let state = this.state;
 
+    let temp = [];
+
     firebase.database().ref('usuarios').on('value', (snapshot) => {
       
+      if(temp.length !== 0){
+        temp = [];
+      }
+
       let dados = snapshot.val();
-      state.usuarios = dados;
-
-
-      console.log(typeof dados);
-      console.log(state);
-      this.setState(state);  
+      
+      for(let prop in dados){
+        temp.push(dados[prop]);
+      }
+      console.log(state.usuarios)
+      this.setState({usuarios: temp});  
     });
   }
 
@@ -59,7 +65,14 @@ class App extends Component{
     let chave = usuarios.push().key;
     usuarios.child(chave).set({
       nome: this.state.nomeInput,
-      idade: this.state.idadeInput
+      idade: this.state.idadeInput,
+      cargo: this.state.cargoInput
+    });
+
+    this.setState({
+      nomeInput: '',
+      idadeInput: '',
+      cargoInput: ''
     });
 
     e.preventDefault();
@@ -67,35 +80,32 @@ class App extends Component{
 
   componentDidMount(){
 
-    firebase.database().ref('token').on('value', (snapshot) => {
+    /*firebase.database().ref('token').on('value', (snapshot) => {
       let state = this.state;
       state.token = snapshot.val();
       this.setState(state);
-    });
+    });*/
 
-    firebase.database().ref('usuarios').child(1).on('value', (snapshot) => {
+    /*firebase.database().ref('usuarios').child(1).on('value', (snapshot) => {
       let state = this.state;
       state.nome = snapshot.val().nome;
       state.idade = snapshot.val().idade;
       this.setState(state);
-    });
+    });*/
 
     this.getUsuarios();
 
   }
 
   render(){
-    const {token, nome, idade, tokenInput, nomeInput, idadeInput} = this.state;
-
+    const {cargoInput, nomeInput, idadeInput} = this.state;
+    
     return(
-      <div>
+      <div className="App">
         <h1>Cadastro de Usuários</h1>
 
 
         <form onSubmit={(e) => this.cadastrar(e)}>
-          <label>Token:</label><br/>
-          <input type="text" id="token" value={tokenInput} 
-                  onChange={(e) => this.setState({tokenInput: e.target.value})}/><br/>
 
           <label>Nome:</label><br/>
           <input type="text" id="nome" value={nomeInput}
@@ -105,24 +115,38 @@ class App extends Component{
           <input type="number" id="idade" value={idadeInput}
                   onChange={(e) => this.setState({idadeInput: e.target.value})}/><br/>
 
+          <label>Cargo:</label><br/>
+          <input type="text" id="token" value={cargoInput} 
+                  onChange={(e) => this.setState({cargoInput: e.target.value})}/><br/>
+                  
           <button type="submit">Salvar dados</button>
         </form>
 
-        {this.state.usuarios.map((item) => {
-
-            return(
-              <div className="dados-usuario">
-                <h3>Nome: {item.nome}</h3>
-                <h3>Idade: {item.idade}</h3>
-                <h3>Cargo: {item.cargo}</h3>
-              </div>
-            )
-          })}
-        
-
+        <div className="dados-usuario">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Cargo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.usuarios.map((item, index) => {
+                
+                return(    
+                  <tr key={index}>
+                    <td className="nome">{item.nome}</td>
+                    <td className="idade">{item.idade}</td>
+                    <td className="cargo">{item.cargo}</td>
+                  </tr>
+                )
+              })}
+            </tbody>  
+          </table>
+        </div>
       </div>
-    );
-  }
+  )}
 }
 
 export default App;
