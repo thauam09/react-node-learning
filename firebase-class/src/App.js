@@ -6,79 +6,114 @@ class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      token: 'Carregando...',
+      email: '',
+      senha: '',
       nome: '',
       idade: '',
       cargoInput: '',
       nomeInput: '',
       idadeInput: '',
-      usuarios: []
+      usuarios: [],
+      user: null
     }
-
-    /*Olheiro
-    firebase.database().ref('token').on('value', (snapshot) =>{
-      let state = this.state;
-      state.token = snapshot.val();
-      this.setState(state);
-    })
-    */
-
-    this.getUsuarios = this.getUsuarios.bind(this);
+    
+    //this.getUsuarios = this.getUsuarios.bind(this);
     this.cadastrar = this.cadastrar.bind(this);
+    this.logar = this.logar.bind(this);
+    this.auth = this.auth.bind(this);
+    this.sair = this.sair.bind(this);
+    //this.sair = this.sair.bind(this);
+    
+    
+    //firebase.auth().signOut();
+    /*firebase.auth().onAuthStateChanged((user) => {
+      if(user){
+        firebase.database().ref('usuarios').child(user.uid).set({
+          nome: this.state.nome
+        })
+        .then(() =>
+          this.setState({
+            nome: '',
+            email: '',
+            senha: ''
+          })
+        )
+      }
+    })*/
   }
 
-
-  getUsuarios(){
-    let state = this.state;
-
-    let temp = [];
-
-    firebase.database().ref('usuarios').on('value', (snapshot) => {
-      
-      if(temp.length !== 0){
-        temp = [];
+  auth(){
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user){
+        this.setState({user: user});
       }
+    })
 
-      let dados = snapshot.val();
-      
-      for(let prop in dados){
-        temp.push(dados[prop]);
-      }
-      console.log(state.usuarios)
-      this.setState({usuarios: temp});  
+  }
+
+  sair(){
+    firebase.auth().signOut()
+    .then(() => {
+      this.setState({user: null})
+      alert('Deslogado com sucesso!');
     });
   }
 
-  cadastrar(e){
 
+  /*getUsuarios(){
+    let state = this.state;
+
+    firebase.database().ref('usuarios').on('value', (snapshot) => {
+      state.usuarios = [];
+      snapshot.forEach((item) => {
+        state.usuarios.push({
+          key: item.key,
+          nome: item.val().nome,
+          idade: item.val().idade,
+          cargo: item.val().cargo
+        });
+      });
+
+      this.setState(state);
+      
+    });
+  }*/
+  
+  logar(){
+    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.senha)
+    .catch((error) => {
+        alert(`Código de erro: ${error.code}`);
+    });
+  }
+
+  cadastrar(){
+    
+    firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.senha)
+    .then(()=>{
+      this.setState({
+        nome: '',
+        email: '',
+        senha: ''
+      })
+    })
+    .catch((error) => {
+        alert(`Código de erro: ${error.code}`);
+    });
+    
     //Inserindo e alterando um novo dado
     //firebase.database().ref('token').set(this.state.tokenInput);
-
+    
     //Alterando ou criando novo dado (se a referência não existe o dado é criado)
     //firebase.database().ref('usuarios').child(1).child('idade').set(this.state.idadeInput);
     //firebase.database().ref('usuarios').child(1).child('cargo').set(this.state.nomeInput);
-
+    
     //Deletando um registro
     //firebase.database().ref('usuarios').child(1).child('cargo').remove();
-
-    let usuarios = firebase.database().ref('usuarios');
-    let chave = usuarios.push().key;
-    usuarios.child(chave).set({
-      nome: this.state.nomeInput,
-      idade: this.state.idadeInput,
-      cargo: this.state.cargoInput
-    });
-
-    this.setState({
-      nomeInput: '',
-      idadeInput: '',
-      cargoInput: ''
-    });
-
-    e.preventDefault();
-  }
-
+}
+  
   componentDidMount(){
+
+    this.auth();
 
     /*firebase.database().ref('token').on('value', (snapshot) => {
       let state = this.state;
@@ -93,7 +128,7 @@ class App extends Component{
       this.setState(state);
     });*/
 
-    this.getUsuarios();
+    //this.getUsuarios();
 
   }
 
@@ -102,49 +137,32 @@ class App extends Component{
     
     return(
       <div className="App">
-        <h1>Cadastro de Usuários</h1>
+
+        {this.state.user ? 
+          <div>
+            <p>Painel Admin</p>
+            <p>Seja Bem-vindo</p>
+            <p>{this.state.user.email}</p>
+            <button onClick={this.sair}>Sair</button>
+          </div> :
+
+          <div>
+            <h1>Seja bem-vindo!</h1>
+
+            <label>Email:</label><br/>
+            <input type="text" value={this.state.email}
+                    onChange={(e) => this.setState({email: e.target.value})} /><br/>
+
+            <label>Senha:</label><br/>
+            <input type="text" value={this.state.senha}
+                    onChange={(e) => this.setState({senha: e.target.value})} /><br/>
+
+            <button onClick={this.cadastrar}>Cadastrar</button>
+            <button onClick={this.logar}>Login</button>
+          </div>
+        }
 
 
-        <form onSubmit={(e) => this.cadastrar(e)}>
-
-          <label>Nome:</label><br/>
-          <input type="text" id="nome" value={nomeInput}
-                  onChange={(e) => this.setState({nomeInput: e.target.value})}/><br/>
-
-          <label>Idade:</label><br/>
-          <input type="number" id="idade" value={idadeInput}
-                  onChange={(e) => this.setState({idadeInput: e.target.value})}/><br/>
-
-          <label>Cargo:</label><br/>
-          <input type="text" id="token" value={cargoInput} 
-                  onChange={(e) => this.setState({cargoInput: e.target.value})}/><br/>
-                  
-          <button type="submit">Salvar dados</button>
-        </form>
-
-        <div className="dados-usuario">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Idade</th>
-                <th>Cargo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.usuarios.map((item, index) => {
-                
-                return(    
-                  <tr key={index}>
-                    <td className="nome">{item.nome}</td>
-                    <td className="idade">{item.idade}</td>
-                    <td className="cargo">{item.cargo}</td>
-                  </tr>
-                )
-              })}
-            </tbody>  
-          </table>
-        </div>
       </div>
   )}
 }
