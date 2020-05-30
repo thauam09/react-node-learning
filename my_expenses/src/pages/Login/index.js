@@ -33,7 +33,7 @@ export default function Login(){
                 </Header>
     
                 <form onSubmit={(e) => {handleSubmit(e)}}>
-                    <label>Para ter acesso ao conteúdo, digite a senha:</label>
+                    <label>Para ter acesso ao conteúdo, digite sua senha:</label>
                     <input type="password" placeholder="Digite sua senha..." value={typedPassword} onChange={(e) => {setTypedPassword(e.target.value)}}/>
                     <button type="submit">Entrar</button>
                 </form>
