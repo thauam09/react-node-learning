@@ -125,9 +125,7 @@ export const PageActions = styled.div`
             cursor: not-allowed;
             opacity: 0.5;
         }
-
     }
-
 `;
 
 export const FilterIssues = styled.div`
@@ -143,7 +141,6 @@ export const FilterIssues = styled.div`
         margin-right: 10px;
     }
 
-
     button{
         outline: 0;
         border: 0;
@@ -153,11 +150,14 @@ export const FilterIssues = styled.div`
         border-radius: 4px;
         margin-right: 10px;
 
-        &:disabled{
+        &:nth-child(${props => props.active + 1}){
+            opacity: 0.5;
             cursor: not-allowed;
-            opacity: 0.5;s
         }
 
+        /*&:disabled{
+            cursor: not-allowed;
+            opacity: 0.5;
+        }*/
     }
-
 `;

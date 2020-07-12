@@ -9,7 +9,12 @@ export default function Repositorio({match}){
     const [issues, setIssues] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [filter, setFilter] = useState('open');
+    const [filters, setFilters] = useState([
+        {state: 'all', label: "Todas", active: true},
+        {state: 'open', label: "Abertas", active: false},
+        {state: 'closed', label: "Fechadas", active: false}
+    ]);
+    const [filterIndex, setFilterIndex] = useState(0);
 
     useEffect(()=> {
 
@@ -46,26 +51,26 @@ export default function Repositorio({match}){
 
             const response = await api.get(`/repos/${nomeRepo}/issues`, {
                 params: {
-                    state: filter,
+                    state: filters[filterIndex].state,
                     page,
                     per_page: 5,
                 }
             });
 
-            console.log(response.data);
             setIssues(response.data);
+            console.log(filterIndex);
         }
 
         loadIssue();
 
-    }, [match.params.repositorio, page, filter]);
+    }, [filterIndex, filters, match.params.repositorio, page]);
 
     function handlePage(action){
         setPage(action === 'previous' ? page - 1 : page + 1 );
     }
 
-    function handleFilter(filter){
-        setFilter(filter);
+    function handleFilter(index){
+        setFilterIndex(index);
     }
 
     if(loading){
@@ -87,20 +92,16 @@ export default function Repositorio({match}){
                 <p>{repositorio.description}</p>
             </Owner>
 
-            <FilterIssues>
-                <p>Filtrar por:</p>
-
-                <button type="button" onClick={() => handleFilter('all')} disabled={filter === 'all'}>
-                    All
-                </button>
-
-                <button type="button" onClick={() => handleFilter('open')} disabled={filter === 'open'}>
-                    Open
-                </button>
-
-                <button type="button" onClick={() => handleFilter('closed')} disabled={filter === 'closed'}>
-                    Closed
-                </button>
+            <FilterIssues active={filterIndex}>
+                {filters.map((filter, index) => (
+                    <button 
+                    type="button"
+                    key={filter.label}
+                    onClick={() => handleFilter(index)}
+                    >
+                        {filter.label}
+                    </button>
+                ))}
             </FilterIssues>
 
             <IssuesList>
